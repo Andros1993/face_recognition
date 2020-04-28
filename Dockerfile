@@ -47,4 +47,5 @@ RUN cd /root/face_recognition && \
     python3 setup.py install
 
 CMD cd /root/face_recognition/examples && \
-    python3 recognize_faces_in_pictures.py
+    python3 web_service_example.py
+EXPOSE 8080
