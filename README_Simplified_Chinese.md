@@ -364,7 +364,9 @@ else:
 
 本项目是基于C++库`dlib`的，所以把本项目部署在Heroku或者AWS的云端服务器上是很明智的。
 
-为了简化这个过程，有一个Dockerfile案例，教你怎么把`face_recognition`开发的app封装成[Docker](https://www.docker.com/) 容器文件，你可以把它部署在所以支持Docker镜像文件的云服务上。
+为了简化这个过程，项目根目录下有一个Dockerfile，教你怎么把`face_recognition`开发的app封装成[Docker](https://www.docker.com/) 容器文件，你可以把它部署在所以支持Docker镜像文件的云服务上。
+
+当然，如果你决定部署到服务器上，并提供 API 给客户端调用，则需要修改这个 Dockerfile。在 examples 文件夹中有一个实例：web_service_example.py 这个例子提供了2个示例接口，方便你使用。
 
 ## 出了幺蛾子？
 
