@@ -63,3 +63,5 @@ target/
 .python-version
 
 .idea/
+jdk-8u271-linux-x64.tar.gz
+*.jar

@@ -1,6 +1,15 @@
 # This is a sample Dockerfile you can modify to deploy your own app based on face_recognition
 
+
+### 1. Get Python
 FROM python:3.6-slim-stretch
+
+### 2. Get Java via the package manager
+ADD jdk-8u271-linux-x64.tar.gz /usr/local/
+ENV JAVA_HOME /usr/local/jdk1.8.0_271
+ENV CLASSPATH $JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
+ENV PATH $PATH:$JAVA_HOME/bin
+
 
 RUN apt-get -y update
 RUN apt-get install -y --fix-missing \
@@ -46,6 +55,15 @@ RUN cd /root/face_recognition && \
     pip3 install -r requirements.txt && \
     python3 setup.py install
 
-CMD cd /root/face_recognition/examples && \
-    python3 web_service_example.py
+# Copy your java project
+COPY et-0.0.1-SNAPSHOT.jar /root/root.jar
+
+
+CMD ["java", "-server", "-jar", "-Denv=dev", \
+    "-Xmx2g", \
+    "-Xms512m", \
+    "-XX:+UseParNewGC", \
+    "-XX:+UseConcMarkSweepGC", \
+    "-XX:+ExplicitGCInvokesConcurrent", \
+    "/root/root.jar"]
 EXPOSE 8080
