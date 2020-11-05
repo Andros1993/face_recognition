@@ -18,8 +18,6 @@
 
 import face_recognition
 from flask import Flask, jsonify, request, redirect
-import json
-import numpy as np
 
 # You can change this to any folder on your system
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
@@ -27,19 +25,12 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 app = Flask(__name__)
 
 
-# list 转成Json格式数据
-def listToJson(lst):
-    keys = [str(x) for x in np.arange(len(lst))]
-    list_json = dict(zip(keys, lst))
-    str_json = json.dumps(list_json, indent=2, ensure_ascii=False)  # json转为string
-    return str_json
-
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-@app.route('/face_encodings', methods=['POST'])
+@app.route('/quality', methods=['GET', 'POST'])
 def upload_image():
     # Check if a valid image file was uploaded
     if request.method == 'POST':
@@ -53,7 +44,7 @@ def upload_image():
 
         if file and allowed_file(file.filename):
             # The image file seems valid! Detect faces and return the result.
-            return detect_faces_in_image(file)
+            return faces_quality_in_image(file)
 
     # If no valid image file was uploaded, show the file upload form:
     return '''
@@ -66,14 +57,26 @@ def upload_image():
     </form>
     '''
 
-def detect_faces_in_image(file_stream):
+
+def faces_quality_in_image(file_stream):
 
     # Load the uploaded image file
     img = face_recognition.load_image_file(file_stream)
     # Get face encodings for any faces in the uploaded image
     unknown_face_encodings = face_recognition.face_encodings(img)
 
-    return json.dumps(unknown_face_encodings[0].tolist())
+    # Get face quality
+    face_locations = face_recognition.face_locations(img)
+
+    # Return the result as json
+    result = []
+    for face in face_locations:
+        width = face[1] - face[3]
+        height = face[2] - face[0]
+        quality = ((width + height)/2 - 150)
+        result.append(quality)
+
+    return jsonify(result)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=1221, debug=True)
